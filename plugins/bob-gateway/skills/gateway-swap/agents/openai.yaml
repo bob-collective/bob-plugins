@@ -1,0 +1,13 @@
+interface:
+  display_name: "Gateway Swap"
+  short_description: "Quote and create BTC swaps through BOB Gateway"
+  default_prompt: "Use $gateway-swap to quote a swap of 0.01 BTC to USDC."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "bob-gateway"
+      description: "BOB Gateway MCP server: routes, quotes, orders"
+      transport: "streamable_http"
+      url: "https://mcp.gobob.xyz/mcp"
+policy:
+  allow_implicit_invocation: true

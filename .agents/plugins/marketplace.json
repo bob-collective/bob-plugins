@@ -1,0 +1,20 @@
+{
+  "name": "bob",
+  "interface": {
+    "displayName": "BOB"
+  },
+  "plugins": [
+    {
+      "name": "bob-gateway",
+      "source": {
+        "source": "local",
+        "path": "./plugins/bob-gateway"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Finance"
+    }
+  ]
+}

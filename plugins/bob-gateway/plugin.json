@@ -1,0 +1,43 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "bob-gateway",
+  "version": "0.1.0",
+  "description": "Swap native BTC to and from tokens on EVM chains and Tron through BOB Gateway, track the orders, and integrate Gateway into an app.",
+  "author": {
+    "name": "BOB",
+    "url": "https://gobob.xyz"
+  },
+  "homepage": "https://docs.gobob.xyz/gateway/agents",
+  "repository": "https://github.com/bob-collective/bob-plugins",
+  "keywords": [
+    "bob",
+    "gateway",
+    "bitcoin",
+    "btc",
+    "swap",
+    "mcp"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "BOB Gateway",
+        "shortDescription": "Swap native BTC through BOB Gateway",
+        "longDescription": "Quote and create swaps between native BTC and tokens on EVM chains and Tron, follow the orders to completion, and integrate Gateway into an app. The agent prepares each order; your own wallet signs every transaction.",
+        "developerName": "BOB",
+        "category": "Finance",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "websiteURL": "https://docs.gobob.xyz/gateway/agents",
+        "privacyPolicyURL": "https://www.gobob.xyz/privacy-policy",
+        "termsOfServiceURL": "https://www.gobob.xyz/terms-of-service",
+        "defaultPrompt": [
+          "How much USDC do I get for 0.01 BTC?",
+          "Where is my Gateway order?",
+          "Add a BTC onramp to this app with the Gateway SDK."
+        ]
+      }
+    }
+  }
+}

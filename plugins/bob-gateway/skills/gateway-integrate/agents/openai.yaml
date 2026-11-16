@@ -1,0 +1,6 @@
+interface:
+  display_name: "Gateway Integrate"
+  short_description: "Integrate BOB Gateway into an app with the SDK or API"
+  default_prompt: "Use $gateway-integrate to add a BTC onramp to this app with the Gateway SDK."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "bob-gateway": {
+      "type": "http",
+      "url": "${BOB_GATEWAY_MCP_URL:-https://mcp.gobob.xyz/mcp}",
+      "headers": {
+        "Authorization": "Bearer ${GATEWAY_API_KEY:-}"
+      }
+    }
+  }
+}

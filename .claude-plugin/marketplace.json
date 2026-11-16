@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "bob",
+  "owner": {
+    "name": "BOB",
+    "url": "https://gobob.xyz"
+  },
+  "description": "BOB plugins for AI agents: swap native BTC through BOB Gateway.",
+  "plugins": [
+    {
+      "name": "bob-gateway",
+      "source": "./plugins/bob-gateway",
+      "description": "Swap native BTC to and from tokens on EVM chains and Tron through BOB Gateway, track the orders, and integrate Gateway into an app.",
+      "category": "development",
+      "strict": true
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+interface:
+  display_name: "Gateway Order Status"
+  short_description: "Track BOB Gateway orders and explain their status"
+  default_prompt: "Use $gateway-order-status to check where my Gateway order is."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "bob-gateway"
+      description: "BOB Gateway MCP server: order lookup"
+      transport: "streamable_http"
+      url: "https://mcp.gobob.xyz/mcp"
+policy:
+  allow_implicit_invocation: true

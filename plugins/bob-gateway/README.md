@@ -13,9 +13,12 @@ Gemini CLI, GitHub Copilot, OpenCode and other agents that read `SKILL.md` files
 | [`gateway-integrate`](skills/gateway-integrate/SKILL.md) | Write or review code that integrates Gateway (SDK, REST API, CLI) |
 
 `gateway-swap` and `gateway-order-status` call the tools of the Gateway MCP server:
-`get_routes`, `get_quote`, `create_order`, `register_tx`, `get_order`, `get_orders`
-and `get_max_spendable`. The server is a pass-through to the public Gateway V4 API.
-`gateway-integrate` works without it.
+`get_routes`, `get_quote`, `create_order`, `quote_and_create`, `register_tx`,
+`get_order`, `wait_for_order`, `get_orders` and `get_max_spendable`. The server is a
+pass-through to the public Gateway V4 API. `quote_and_create` quotes and creates an
+order in one call, and `wait_for_order` waits up to about 45 seconds for an order's
+status to change, so agents make fewer calls. `gateway-integrate` works without the
+server.
 
 Neither the server nor the skills hold keys or sign anything. The agent prepares
 the order and tells the user what to sign, and the user's own wallet signs and
@@ -131,9 +134,9 @@ gateway applies that integrator's pricing to the orders; every tool works withou
 it. Request one from gateway@gobob.xyz, and set it in the environment your agent
 starts from, never in chat.
 
-`create_order` creates a real order, and `register_tx` broadcasts a Bitcoin
-transaction that cannot be undone. Keep both behind your agent's tool-approval
-prompt.
+`create_order` and `quote_and_create` create a real order, and `register_tx`
+broadcasts a Bitcoin transaction that cannot be undone. Keep all three behind your
+agent's tool-approval prompt.
 
 ## Learn more
 

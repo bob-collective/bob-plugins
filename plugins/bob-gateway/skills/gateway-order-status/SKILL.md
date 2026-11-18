@@ -1,12 +1,13 @@
 ---
 name: gateway-order-status
-description: Use when a user asks where their BOB Gateway swap or funds are, whether an order completed, why it is pending, stuck, failed or refunded, whether they will get a refund, or wants the swap history for an address — and when following an order to completion after a swap. Covers the bob-gateway MCP tools get_order and get_orders.
+description: Use when a user asks where their BOB Gateway swap or funds are, whether an order completed, why it is pending, stuck, failed or refunded, whether they will get a refund, or wants the swap history for an address — and when following an order to completion after a swap. Covers the bob-gateway MCP tools get_order, wait_for_order and get_orders.
 ---
 
 # Gateway Order Status
 
-Look up BOB Gateway orders with the `bob-gateway` MCP server's `get_order` and
-`get_orders` tools, and explain what the result means. Both tools are read-only.
+Look up BOB Gateway orders with the `bob-gateway` MCP server's `get_order`,
+`wait_for_order` and `get_orders` tools, and explain what the result means. All
+three are read-only.
 
 Your client may show the tools with a prefix, such as
 `mcp__bob-gateway__get_order`. If no `bob-gateway` tools are available, the server
@@ -98,6 +99,9 @@ transaction hash.
 
 ## Following an order
 
-Check every 30–60 seconds while the estimate is a few minutes, and every few
-minutes when it is longer. After about ten checks without a change, stop, report
-the current state, and give the tracking link.
+Call `wait_for_order` with the same `id` you would pass to `get_order`; it returns
+the same response. It returns as soon as `status` leaves `inProgress`, or after
+about 45 seconds with the order as it stands, and when the server is busy it may
+return after a single read. While the order is still `inProgress`, call it again.
+Do not loop on `get_order` instead: it reads the order once. After about ten calls
+without a change, stop, report the current state, and give the tracking link.

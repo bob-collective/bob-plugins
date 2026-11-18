@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "bob-gateway",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Swap native BTC to and from tokens on EVM chains and Tron through BOB Gateway, track the orders, and integrate Gateway into an app.",
   "author": {
     "name": "BOB",

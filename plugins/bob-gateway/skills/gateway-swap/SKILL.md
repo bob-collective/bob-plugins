@@ -1,6 +1,6 @@
 ---
 name: gateway-swap
-description: Use when a user wants to swap, bridge, buy, or sell native BTC against tokens on EVM chains or Tron, or swap tokens across those chains, through BOB Gateway — including price checks ("how much USDC for 0.01 BTC?"), onramps (BTC to token), offramps (token to BTC), and any use of the bob-gateway MCP tools get_routes, get_quote, create_order, register_tx, or get_max_spendable.
+description: Use when a user wants to swap, bridge, buy, or sell native BTC against tokens on EVM chains or Tron, or swap tokens across those chains, through BOB Gateway — including price checks ("how much USDC for 0.01 BTC?"), onramps (BTC to token), offramps (token to BTC), and any use of the bob-gateway MCP tools get_routes, get_quote, create_order, quote_and_create, register_tx, or get_max_spendable.
 ---
 
 # Gateway Swap
@@ -23,8 +23,9 @@ and stop. Do not improvise the swap with the REST API, a CLI, or a script.
    transaction, and do not run anything that signs with a key on the user's behalf
    — a wallet CLI, `gateway-cli`, `cast send`, or a script. Every transaction is
    signed in the user's own wallet.
-2. **Confirm before `create_order`.** Show the quote (step 3) and wait for an
-   explicit yes. `create_order` reserves solver liquidity.
+2. **Confirm before creating an order.** Show the quote (step 3) and wait for an
+   explicit yes. `create_order` and `quote_and_create` reserve solver liquidity,
+   so never call either to check a price: that is what `get_quote` is for.
 3. **Never edit a quote.** Pass the object from `get_quote` to `create_order`
    unchanged. To change anything — amount, slippage, an address — call `get_quote`
    again.
@@ -85,9 +86,12 @@ proceed.
   swap: the cost is in the rate, so compare `inputAmount.usd` with
   `outputAmount.usd`.
 - An onramp quote expires one minute after it is issued, and prices move on every
-  route. If the user's yes arrives more than a minute after the quote, call
-  `get_quote` again with the same arguments. If the new output is lower than the
-  one they approved, show it and ask again; if not, go ahead.
+  route. If the user's yes arrives more than a minute after the quote, do not
+  reuse it: call `quote_and_create` with the same arguments, which requotes and
+  creates the order in one call (step 4). If the output of its `quote` is lower
+  than the one they approved, show the new quote and ask again before you hand
+  over anything to sign; if they decline, they sign nothing and the order is never
+  filled. If it is not lower, go ahead.
 - When the source is a token, give the user the approval details from
   [Token approval](#token-approval) now, so they can approve before the order's
   time window starts (step 4).
@@ -95,8 +99,10 @@ proceed.
 ### 4. Create the order
 
 Call `create_order` with `{"quote": <the whole get_quote result>}`, including its
-`onramp` / `offramp` / `tokenSwap` key. The result has one key matching the quote
-type, and the fields inside it are snake_case.
+`onramp` / `offramp` / `tokenSwap` key. `quote_and_create` returns
+`{quote, order}` instead: `quote` as `get_quote` returns it, and `order` as
+`create_order` does. The order has one key matching the quote type, and the fields
+inside it are snake_case.
 
 **Onramp** — `{order_id, address, op_return_data, psbt_hex?}`
 
@@ -193,13 +199,14 @@ other token, USDT on other chains included, needs the reset: say nothing about i
 
 ## Errors
 
-A failed call returns `{"status": <http status>, "error": {"code", "error", "details"?}}`.
-Branch on `code`:
+A failed call returns `{"status": <http status>, "error": {"code", "error", "details"?}}`;
+a failed `quote_and_create` returns the error of whichever step failed. Branch on
+`code`:
 
 | `code` | What to do |
 |---|---|
 | `MISSING_REFUND_ADDRESS` | Requote with `refund_address`. |
-| `INVALID_REQUEST` mentioning an expired quote, an expired order, or a signature | Requote, then create the order from the new quote. |
+| `INVALID_REQUEST` mentioning an expired quote, an expired order, or a signature | Call `quote_and_create` with the same arguments, and check the new quote as in step 3. |
 | `NON_COMPLIANT_ADDRESSES` | An address failed compliance screening. Stop and tell the user. Do not help work around it. |
 | `NO_ROUTE`, `BUNGEE_NO_ROUTE`, `DISABLED_CHAIN` | The route is not available (now). Check `get_routes`. |
 | `QUOTE_AMOUNT_TOO_LOW`, `INSUFFICIENT_AMOUNT`, `UNABLE_TO_COVER_FEES` | The amount is too small. `details`, when present, has the figures (the minimum, or the fees against the amount). |
